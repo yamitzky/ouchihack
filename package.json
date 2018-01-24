@@ -1,27 +1,16 @@
 {
   "name": "ouchihack",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yamitzky/ouchihack.git"
-  },
-  "author": "Yamitzky",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/yamitzky/ouchihack/issues"
-  },
+  "version": "0.0.0",
+  "private": true,
+  "author": "Yamitzky <negiga@gmail.com>",
+  "description": "Yamitzky hacks ouchi",
   "homepage": "https://github.com/yamitzky/ouchihack#readme",
+  "license": "MIT",
   "dependencies": {
-    "axios": "^0.16.2",
-    "body-parser": "^1.18.2",
-    "express": "^4.16.2",
+    "axios": "^0.17.1",
     "google-home-notifier": "^1.2.0",
-    "localtunnel": "^1.8.3",
-    "ps4-waker": "^1.4.0"
+    "hubot": "^2.19.0",
+    "hubot-help": "^0.2.2",
+    "ps4-waker": "^1.4.3"
   }
 }
