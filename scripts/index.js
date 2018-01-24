@@ -19,24 +19,6 @@ module.exports = (robot) => {
     googlehome.notify(msg, console.log)
   })
 
-  robot.hear(/irkit (.*)/i, (res) => {
-    const key = res.match[1]
-    fs.readFile(`${process.env.HOME}/.irkit.d/signals/${key}.json`, async (err, data) => {
-      if (err) {
-        console.log(err)
-        res.send(`${err}`)
-        return
-      }
-      try {
-        await axios.post(`${IRKIT_ADDR}/messages`, data)
-        console.log(`IRKitに${req.body.key}をリクエストしました`)
-        res.send(`IRKitで ${key} を実行しました`)
-      } catch (e) {
-        res.send(`${e}`)
-      }
-    })
-  })
-
   robot.hear(/turn on ps4/i, async (res) => {
     try {
       await ps4.turnOn()
@@ -53,5 +35,27 @@ module.exports = (robot) => {
     } catch (e) {
       res.send(`${e}`)
     }
+  })
+
+  const irkitKeys = fs
+    .readdirSync(`${process.env.HOME}/.irkit.d/signals/`)
+    .map(file => file.replace(/\.json$/, '').replace('_', ' '))
+    .join('|')
+  robot.hear(new RegExp(`(?:(${irkitKeys})|irkit (.*))`, 'i'), (res) => {
+    const key = (res.match[1] || res.match[2]).replace(' ', '_')
+    fs.readFile(`${process.env.HOME}/.irkit.d/signals/${key}.json`, async (err, data) => {
+      if (err) {
+        console.log(err)
+        res.send(`${err}`)
+        return
+      }
+      try {
+        await axios.post(`${IRKIT_ADDR}/messages`, data)
+        console.log(`IRKitに${req.body.key}をリクエストしました`)
+        res.send(`IRKitで ${key} を実行しました`)
+      } catch (e) {
+        res.send(`${e}`)
+      }
+    })
   })
 }
