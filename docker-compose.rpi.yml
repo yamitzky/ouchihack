@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.rpi
+    environment:
+      - IRKIT_ADDR
+      - HUBOT_SLACK_TOKEN
+    volumes:
+      - ~/.irkit.d:/root/.irkit.d
