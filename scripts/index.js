@@ -51,7 +51,7 @@ module.exports = (robot) => {
       }
       try {
         await axios.post(`${IRKIT_ADDR}/messages`, data)
-        console.log(`${req.body.key} のリモコン操作をしました`)
+        console.log(`${key} のリモコン操作をしました`)
         res.send(`${key} のリモコン操作をしました`)
       } catch (e) {
         res.send(`${e}`)
