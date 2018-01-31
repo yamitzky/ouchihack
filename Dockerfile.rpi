@@ -1,0 +1,16 @@
+FROM arm32v6/node:alpine
+
+RUN apk add -U --virtual build-dependencies python g++ make \
+      && apk add -U dbus avahi avahi-compat-libdns_sd avahi-dev
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+COPY package.json /usr/src/app
+COPY yarn.lock /usr/src/app
+RUN yarn
+RUN apk del --purge build-dependencies
+
+COPY . /usr/src/app
+
+CMD ["./docker-entrypoint.sh"]
