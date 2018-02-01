@@ -4,8 +4,12 @@ const axios = require('axios')
 const ps4Waker = require('ps4-waker')
 
 const IRKIT_ADDR = process.env.IRKIT_ADDR
+const GOOGLE_HOME_IP = process.env.GOOGLE_HOME_IP
 
 googlehome.device('Google Home', 'ja')
+if (GOOGLE_HOME_IP) {
+  googlehome.ip(GOOGLE_HOME_IP, 'ja')
+}
 const ps4 = new ps4Waker.Device()
 
 module.exports = (robot) => {

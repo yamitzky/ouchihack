@@ -8,5 +8,6 @@ services:
     environment:
       - IRKIT_ADDR
       - HUBOT_SLACK_TOKEN
+      - GOOGLE_HOME_ADDR
     volumes:
       - ~/.irkit.d:/root/.irkit.d
