@@ -12,7 +12,7 @@ if (GOOGLE_HOME_IP) {
 }
 const ps4 = new ps4Waker.Device()
 
-module.exports = (robot) => {
+module.exports = async (robot) => {
   robot.respond('ping', (res) => {
     res.send('pong')
   })
@@ -41,25 +41,23 @@ module.exports = (robot) => {
     }
   })
 
-  const irkitKeys = fs
-    .readdirSync(`${process.env.HOME}/.irkit.d/signals/`)
-    .map(file => file.replace(/\.json$/, '').replace('_', ' '))
-    .join('|')
-  robot.hear(new RegExp(`(?:(${irkitKeys})|irkit (.*))`, 'i'), (res) => {
-    const key = (res.match[1] || res.match[2]).replace(' ', '_')
-    fs.readFile(`${process.env.HOME}/.irkit.d/signals/${key}.json`, async (err, data) => {
-      if (err) {
-        console.log(err)
-        res.send(`${err}`)
-        return
-      }
-      try {
-        await axios.post(`${IRKIT_ADDR}/messages`, data)
-        console.log(`${key} のリモコン操作をしました`)
-        res.send(`${key} のリモコン操作をしました`)
-      } catch (e) {
-        res.send(`${e}`)
-      }
-    })
-  })
+  const { data: appliances } = await axios.get('https://api.nature.global/1/appliances', {
+    headers: {
+      Authorization: `Bearer ${process.env.NATURE_REMO_TOKEN}`
+    }})
+  for (const app of appliances) {
+    for (const sig of app.signals) {
+      robot.hear(new RegExp(`${app.nickname}[ 　のを-]${sig.name}`, 'i'), async (res) => {
+        try {
+          await axios.post(`https://api.nature.global/1/signals/${sig.id}/send`, null, {
+            headers: {
+              Authorization: `Bearer ${process.env.NATURE_REMO_TOKEN}`
+            }})
+          res.send(`${app.nickname}-${sig.name} のリモコン操作をしました`)
+        } catch (e) {
+          res.send(`${e}`)
+        }
+      })
+    }
+  }
 }
