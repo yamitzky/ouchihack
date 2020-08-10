@@ -4,37 +4,60 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '12'
-        check-latest: true
-    
-    - name: Build
-      working-directory: check-human
-      run: |
-        yarn install
-        yarn build
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "12"
 
-    - name: Serverless
-      uses: serverless/github-action@v1.53.0
-    
-    - name: Deploy cache table
-      working-directory: cache
-    - run: serverless deploy
+      - name: Build
+        working-directory: ./worker/check-human
+        run: |
+          yarn install
+          yarn build
 
-    - name: Deploy iam role
-      working-directory: role
-    - run: serverless deploy
+      - name: Deploy cache table
+        uses: serverless/github-action@v1.53.0
+        working-directory: ./worker/cache
+        with:
+          args: deploy
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ORGANIZATION: ${{ secrets.ORGANIZATION }}
+          NATURE_REMO_TOKEN: ${{ secrets.NATURE_REMO_TOKEN }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
 
-    - name: Deploy function
-      working-directory: check-human
-    - run: serverless deploy
+      - name: Deploy iam role
+        uses: serverless/github-action@v1.53.0
+        working-directory: ./worker/role
+        with:
+          args: deploy
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ORGANIZATION: ${{ secrets.ORGANIZATION }}
+          NATURE_REMO_TOKEN: ${{ secrets.NATURE_REMO_TOKEN }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+
+      - name: Deploy function
+        uses: serverless/github-action@v1.53.0
+        working-directory: ./worker/check-human
+        with:
+          args: deploy
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ORGANIZATION: ${{ secrets.ORGANIZATION }}
+          NATURE_REMO_TOKEN: ${{ secrets.NATURE_REMO_TOKEN }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
