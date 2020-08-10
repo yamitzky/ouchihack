@@ -8,6 +8,8 @@ inputs:
   name: ${app}-${name}-${stage}
   src: ./dist
   roleArn: ${output:role.arn}
+  timeout: 30
+  memory: 256
   env:
     NATURE_REMO_TOKEN: ${env:NATURE_REMO_TOKEN}
     TABLE_NAME: ${output:cache.name}
