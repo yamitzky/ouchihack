@@ -1,0 +1,14 @@
+component: aws-dynamodb@1.1.2
+name: cache
+org: ${env:ORGANIZATION}
+app: ouchi-worker
+stage: dev
+
+inputs:
+  name: ${app}-${name}-${stage}
+  attributeDefinitions:
+    - AttributeName: id
+      AttributeType: S
+  keySchema:
+    - AttributeName: id
+      KeyType: HASH

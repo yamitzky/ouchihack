@@ -1,0 +1,14 @@
+component: aws-lambda@2.0.0
+name: check-human
+org: ${env:ORGANIZATION}
+app: ouchi-worker
+stage: dev
+
+inputs:
+  name: ${app}-${name}-${stage}
+  src: ./dist
+  roleArn: ${output:role.arn}
+  env:
+    NATURE_REMO_TOKEN: ${env:NATURE_REMO_TOKEN}
+    TABLE_NAME: ${output:cache.name}
+    WEBHOOK_URL: ${env:WEBHOOK_URL}
